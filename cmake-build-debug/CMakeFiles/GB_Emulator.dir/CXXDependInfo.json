@@ -1,0 +1,67 @@
+{
+	"bmi-installation" : null,
+	"compiler-frontend-variant" : "MSVC",
+	"compiler-id" : "MSVC",
+	"compiler-simulate-id" : "",
+	"config" : "Debug",
+	"cxx-modules" : {},
+	"database-info" : null,
+	"dir-cur-bld" : "C:/Users/toogo/CLionProjects/GB_Emulator/cmake-build-debug",
+	"dir-cur-src" : "C:/Users/toogo/CLionProjects/GB_Emulator",
+	"dir-top-bld" : "C:/Users/toogo/CLionProjects/GB_Emulator/cmake-build-debug",
+	"dir-top-src" : "C:/Users/toogo/CLionProjects/GB_Emulator",
+	"exports" : [],
+	"forward-modules-from-target-dirs" : [],
+	"include-dirs" : [],
+	"language" : "CXX",
+	"linked-target-dirs" : [],
+	"module-dir" : "C:/Users/toogo/CLionProjects/GB_Emulator/cmake-build-debug/CMakeFiles/GB_Emulator.dir",
+	"sources" : 
+	{
+		"CMakeFiles/GB_Emulator.dir/Emulator/GameBoy.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/toogo/CLionProjects/GB_Emulator/Emulator/GameBoy.cpp"
+		},
+		"CMakeFiles/GB_Emulator.dir/Emulator/cartridge/Cartridge.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/toogo/CLionProjects/GB_Emulator/Emulator/cartridge/Cartridge.cpp"
+		},
+		"CMakeFiles/GB_Emulator.dir/Emulator/cpu/CPU.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/toogo/CLionProjects/GB_Emulator/Emulator/cpu/CPU.cpp"
+		},
+		"CMakeFiles/GB_Emulator.dir/Emulator/debug/Debugger.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/toogo/CLionProjects/GB_Emulator/Emulator/debug/Debugger.cpp"
+		},
+		"CMakeFiles/GB_Emulator.dir/Emulator/joypad/Joypad.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/toogo/CLionProjects/GB_Emulator/Emulator/joypad/Joypad.cpp"
+		},
+		"CMakeFiles/GB_Emulator.dir/Emulator/main.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/toogo/CLionProjects/GB_Emulator/Emulator/main.cpp"
+		},
+		"CMakeFiles/GB_Emulator.dir/Emulator/memory/Bus.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/toogo/CLionProjects/GB_Emulator/Emulator/memory/Bus.cpp"
+		},
+		"CMakeFiles/GB_Emulator.dir/Emulator/ppu/PPU.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/toogo/CLionProjects/GB_Emulator/Emulator/ppu/PPU.cpp"
+		},
+		"CMakeFiles/GB_Emulator.dir/Emulator/timer/Timer.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/toogo/CLionProjects/GB_Emulator/Emulator/timer/Timer.cpp"
+		}
+	}
+}

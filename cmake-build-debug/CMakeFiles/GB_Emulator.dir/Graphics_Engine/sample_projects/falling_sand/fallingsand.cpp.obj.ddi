@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "CMakeFiles\\GB_Emulator.dir\\Graphics_Engine\\sample_projects\\falling_sand\\fallingsand.cpp.obj",
+            "outputs": [
+                "C:\\Users\\toogo\\CLionProjects\\GB_Emulator\\cmake-build-debug\\vc140.pdb",
+                "CMakeFiles\\GB_Emulator.dir\\Graphics_Engine\\sample_projects\\falling_sand\\fallingsand.cpp.obj.ddi"
+            ],
+            "requires": []
+        }
+    ]
+}

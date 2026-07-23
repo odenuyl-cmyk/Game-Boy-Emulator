@@ -1,0 +1,19 @@
+ninja_dyndep_version = 1.0
+build CMakeFiles\GB_Emulator.dir\Emulator\main.cpp.obj: dyndep
+
+build CMakeFiles\GB_Emulator.dir\Emulator\GameBoy.cpp.obj: dyndep
+
+build CMakeFiles\GB_Emulator.dir\Emulator\cpu\CPU.cpp.obj: dyndep
+
+build CMakeFiles\GB_Emulator.dir\Emulator\debug\Debugger.cpp.obj: dyndep
+
+build CMakeFiles\GB_Emulator.dir\Emulator\joypad\Joypad.cpp.obj: dyndep
+
+build CMakeFiles\GB_Emulator.dir\Emulator\memory\Bus.cpp.obj: dyndep
+
+build CMakeFiles\GB_Emulator.dir\Emulator\ppu\PPU.cpp.obj: dyndep
+
+build CMakeFiles\GB_Emulator.dir\Emulator\timer\Timer.cpp.obj: dyndep
+
+build CMakeFiles\GB_Emulator.dir\Emulator\cartridge\Cartridge.cpp.obj: dyndep
+

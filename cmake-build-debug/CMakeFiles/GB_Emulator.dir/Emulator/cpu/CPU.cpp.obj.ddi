@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "CMakeFiles\\GB_Emulator.dir\\Emulator\\cpu\\CPU.cpp.obj",
+            "outputs": [
+                "C:\\Users\\toogo\\CLionProjects\\GB_Emulator\\cmake-build-debug\\vc140.pdb",
+                "CMakeFiles\\GB_Emulator.dir\\Emulator\\cpu\\CPU.cpp.obj.ddi"
+            ],
+            "requires": []
+        }
+    ]
+}

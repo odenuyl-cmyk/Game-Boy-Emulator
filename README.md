@@ -1,2 +1,28 @@
-# GB_Emulator
-game boy emulator rendered using my own custom graphics engine
+Game Boy Emulator
+
+Goals
+
+- Accurate CPU implementation
+- Modular architecture
+- OpenGL renderer
+- Integrated debugger
+- Save states
+- MBC support
+
+Current Progress
+
+[ ] CPU
+
+[ ] Memory Bus
+
+[ ] Cartridge
+
+[ ] Interrupts
+
+[ ] Timers
+
+[ ] Graphics
+
+[ ] Input
+
+[ ] Audio
