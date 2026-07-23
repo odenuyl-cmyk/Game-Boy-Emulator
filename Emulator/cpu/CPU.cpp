@@ -1,12 +1,18 @@
 #include "CPU.h"
 #include "../memory/Bus.h"
+#include "../debug/Debugger.h"
 
-class CPU {
-public:
-    explicit CPU(Bus& bus);
+Debugger debugger;
 
-    void step();
+CPU::CPU(Bus& memoryBus)
+    : memoryBus(memoryBus)
+{
+}
 
-private:
-    Bus& bus;
-};
+void CPU::step()
+{
+    uint8_t operation = memoryBus.read(PC);
+    debugger.logOperation(PC, operation);
+
+    PC++;
+}

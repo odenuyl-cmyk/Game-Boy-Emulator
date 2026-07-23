@@ -1,8 +1,10 @@
-//
-// Created by toogo on 7/23/2026.
-//
+#pragma once
 
-#ifndef GB_EMULATOR_DEBUGGER_H
-#define GB_EMULATOR_DEBUGGER_H
+#include "../cpu/CPU.h"
+#include <cstdint>
 
-#endif //GB_EMULATOR_DEBUGGER_H
+class Debugger {
+public:
+    void logOperation(uint16_t pc, uint8_t opcode);
+    void dumpCPU(const CPU& cpu);
+};
