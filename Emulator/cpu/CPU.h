@@ -1,10 +1,11 @@
 #pragma once
 #include "../memory/Bus.h"
 
+class Debugger;
 
 class CPU {
 public:
-    explicit CPU(Bus& memoryBus);
+    explicit CPU(Bus& memoryBus, Debugger& debugger);
 
     void step();
 
@@ -41,6 +42,7 @@ public:
 
 private:
     Bus& memoryBus;
+    Debugger& debugger;
 
     uint8_t A = 0;
     uint8_t B = 0;

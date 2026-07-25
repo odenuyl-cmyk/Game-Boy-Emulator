@@ -5,12 +5,17 @@
 int main()
 {
     Bus bus;
-    CPU cpu(bus);
     Debugger debugger;
+    CPU cpu(bus, debugger);
 
-    bus.write(0x0000, 0x55);
-    bus.write(0x0001, 0x32);
-    bus.write(0x0002, 0x11);
+    bus.write(0x0000, 0x3E);
+    bus.write(0x0001, 0x42);
+    bus.write(0x0002, 0x16);
+    bus.write(0x0003, 0x16);
+    bus.write(0x0004, 0x00);
+    bus.write(0x0005, 0x22);
+    bus.write(0x0006, 0x2E);
+    bus.write(0x0007, 0xE9);
 
     cpu.step();
     cpu.step();
