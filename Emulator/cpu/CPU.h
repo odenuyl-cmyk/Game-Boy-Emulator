@@ -39,6 +39,13 @@ public:
     uint16_t getSP() const {
         return SP;
     }
+    uint16_t getBC() const {
+        return (B << 8) | C;
+    }
+    void setBC(uint16_t value) {
+        B = value >> 8;
+        C = value & 0xFF;
+    }
 
 private:
     Bus& memoryBus;
