@@ -46,6 +46,20 @@ public:
         B = value >> 8;
         C = value & 0xFF;
     }
+    uint16_t getDE() const {
+        return (D << 8) | E;
+    }
+    void setDE(uint16_t value) {
+        D = value >> 8;
+        E = value & 0xFF;
+    }
+    uint16_t getHL() const {
+        return (H << 8) | L;
+    }
+    void setHL(uint16_t value) {
+        H = value >> 8;
+        L = value & 0xFF;
+    }
 
 private:
     Bus& memoryBus;
