@@ -7,6 +7,13 @@ CPU::CPU(Bus& memoryBus, Debugger& debugger)
 {
 }
 
+void CPU::exec_CB(uint8_t operation) {
+    switch (operation) {
+        default:
+            break;
+    }
+}
+
 void CPU::step()
 {
     uint8_t operation = memoryBus.read(PC);

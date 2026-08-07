@@ -8,6 +8,7 @@ public:
     explicit CPU(Bus& memoryBus, Debugger& debugger);
 
     void step();
+    void exec_CB(uint8_t operation);
 
     uint8_t getA() const {
         return A;
