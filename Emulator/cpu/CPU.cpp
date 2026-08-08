@@ -9,7 +9,391 @@ CPU::CPU(Bus& memoryBus, Debugger& debugger)
 
 void CPU::exec_CB(uint8_t operation) {
     switch (operation) {
-        default:
+        case 0x80: // RES 0,B
+            B &= ~(1 << 0);
+            break;
+        case 0x81: // RES 0,C
+            C &= ~(1 << 0);
+            break;
+        case 0x82: // RES 0,D
+            D &= ~(1 << 0);
+            break;
+        case 0x83: // RES 0,E
+            E &= ~(1 << 0);
+            break;
+        case 0x84: // RES 0,H
+            H &= ~(1 << 0);
+            break;
+        case 0x85: // RES 0,L
+            L &= ~(1 << 0);
+            break;
+        case 0x86: // RES 0,[HL]
+            memoryBus.write(getHL(), memoryBus.read(getHL()) & ~(1 << 0));
+            break;
+        case 0x87: // RES 0,A
+            A &= ~(1 << 0);
+            break;
+        case 0x88: // RES 1,B
+            B &= ~(1 << 1);
+            break;
+        case 0x89: // RES 1,C
+            C &= ~(1 << 1);
+            break;
+        case 0x8A: // RES 1,D
+            D &= ~(1 << 1);
+            break;
+        case 0x8B: // RES 1,E
+            E &= ~(1 << 1);
+            break;
+        case 0x8C: // RES 1,H
+            H &= ~(1 << 1);
+            break;
+        case 0x8D: // RES 1,L
+            L &= ~(1 << 1);
+            break;
+        case 0x8E: // RES 1,[HL]
+            memoryBus.write(getHL(), memoryBus.read(getHL()) & ~(1 << 1));
+            break;
+        case 0x8F: // RES 1,A
+            A &= ~(1 << 1);
+            break;
+        case 0x90: // RES 2,B
+            B &= ~(1 << 2);
+            break;
+        case 0x91: // RES 2,C
+            C &= ~(1 << 2);
+            break;
+        case 0x92: // RES 2,D
+            D &= ~(1 << 2);
+            break;
+        case 0x93: // RES 2,E
+            E &= ~(1 << 2);
+            break;
+        case 0x94: // RES 2,H
+            H &= ~(1 << 2);
+            break;
+        case 0x95: // RES 2,L
+            L &= ~(1 << 2);
+            break;
+        case 0x96: // RES 2,[HL]
+            memoryBus.write(getHL(), memoryBus.read(getHL()) & ~(1 << 2));
+            break;
+        case 0x97: // RES 2,A
+            A &= ~(1 << 2);
+            break;
+        case 0x98: // RES 3,B
+            B &= ~(1 << 3);
+            break;
+        case 0x99: // RES 3,C
+            C &= ~(1 << 3);
+            break;
+        case 0x9A: // RES 3,D
+            D &= ~(1 << 3);
+            break;
+        case 0x9B: // RES 3,E
+            E &= ~(1 << 3);
+            break;
+        case 0x9C: // RES 3,H
+            H &= ~(1 << 3);
+            break;
+        case 0x9D: // RES 3,L
+            L &= ~(1 << 3);
+            break;
+        case 0x9E: // RES 3,[HL]
+            memoryBus.write(getHL(), memoryBus.read(getHL()) & ~(1 << 3));
+            break;
+        case 0x9F: // RES 3,A
+            A &= ~(1 << 3);
+            break;
+        case 0xA0: // RES 4,B
+            B &= ~(1 << 4);
+            break;
+        case 0xA1: // RES 4,C
+            C &= ~(1 << 4);
+            break;
+        case 0xA2: // RES 4,D
+            D &= ~(1 << 4);
+            break;
+        case 0xA3: // RES 4,E
+            E &= ~(1 << 4);
+            break;
+        case 0xA4: // RES 4,H
+            H &= ~(1 << 4);
+            break;
+        case 0xA5: // RES 4,L
+            L &= ~(1 << 4);
+            break;
+        case 0xA6: // RES 4,[HL]
+            memoryBus.write(getHL(), memoryBus.read(getHL()) & ~(1 << 4));
+            break;
+        case 0xA7: // RES 4,A
+            A &= ~(1 << 4);
+            break;
+        case 0xA8: // RES 5,B
+            B &= ~(1 << 5);
+            break;
+        case 0xA9: // RES 5,C
+            C &= ~(1 << 5);
+            break;
+        case 0xAA: // RES 5,D
+            D &= ~(1 << 5);
+            break;
+        case 0xAB: // RES 5,E
+            E &= ~(1 << 5);
+            break;
+        case 0xAC: // RES 5,H
+            H &= ~(1 << 5);
+            break;
+        case 0xAD: // RES 5,L
+            L &= ~(1 << 5);
+            break;
+        case 0xAE: // RES 5,[HL]
+            memoryBus.write(getHL(), memoryBus.read(getHL()) & ~(1 << 5));
+            break;
+        case 0xAF: // RES 5,A
+            A &= ~(1 << 5);
+            break;
+        case 0xB0: // RES 6,B
+            B &= ~(1 << 6);
+            break;
+        case 0xB1: // RES 6,C
+            C &= ~(1 << 6);
+            break;
+        case 0xB2: // RES 6,D
+            D &= ~(1 << 6);
+            break;
+        case 0xB3: // RES 6,E
+            E &= ~(1 << 6);
+            break;
+        case 0xB4: // RES 6,H
+            H &= ~(1 << 6);
+            break;
+        case 0xB5: // RES 6,L
+            L &= ~(1 << 6);
+            break;
+        case 0xB6: // RES 6,[HL]
+            memoryBus.write(getHL(), memoryBus.read(getHL()) & ~(1 << 6));
+            break;
+        case 0xB7: // RES 6,A
+            A &= ~(1 << 6);
+            break;
+        case 0xB8: // RES 7,B
+            B &= ~(1 << 7);
+            break;
+        case 0xB9: // RES 7,C
+            C &= ~(1 << 7);
+            break;
+        case 0xBA: // RES 7,D
+            D &= ~(1 << 7);
+            break;
+        case 0xBB: // RES 7,E
+            E &= ~(1 << 7);
+            break;
+        case 0xBC: // RES 7,H
+            H &= ~(1 << 7);
+            break;
+        case 0xBD: // RES 7,L
+            L &= ~(1 << 7);
+            break;
+        case 0xBE: // RES 7,[HL]
+            memoryBus.write(getHL(), memoryBus.read(getHL()) & ~(1 << 7));
+            break;
+        case 0xBF: // RES 7,A
+            A &= ~(1 << 7);
+            break;
+        case 0xC0: // SET 0,B
+            B |= (1 << 0);
+            break;
+        case 0xC1: // SET 0,C
+            C |= (1 << 0);
+            break;
+        case 0xC2: // SET 0,D
+            D |= (1 << 0);
+            break;
+        case 0xC3: // SET 0,E
+            E |= (1 << 0);
+            break;
+        case 0xC4: // SET 0,H
+            H |= (1 << 0);
+            break;
+        case 0xC5: // SET 0,L
+            L |= (1 << 0);
+            break;
+        case 0xC6: // SET 0,[HL]
+            memoryBus.write(getHL(), memoryBus.read(getHL()) | (1 << 0));
+            break;
+        case 0xC7: // SET 0,A
+            A |= (1 << 0);
+            break;
+        case 0xC8: // SET 1,B
+            B |= (1 << 1);
+            break;
+        case 0xC9: // SET 1,C
+            C |= (1 << 1);
+            break;
+        case 0xCA: // SET 1,D
+            D |= (1 << 1);
+            break;
+        case 0xCB: // SET 1,E
+            E |= (1 << 1);
+            break;
+        case 0xCC: // SET 1,H
+            H |= (1 << 1);
+            break;
+        case 0xCD: // SET 1,L
+            L |= (1 << 1);
+            break;
+        case 0xCE: // SET 1,[HL]
+            memoryBus.write(getHL(), memoryBus.read(getHL()) | (1 << 1));
+            break;
+        case 0xCF: // SET 1,A
+            A |= (1 << 1);
+            break;
+        case 0xD0: // SET 2,B
+            B |= (1 << 2);
+            break;
+        case 0xD1: // SET 2,C
+            C |= (1 << 2);
+            break;
+        case 0xD2: // SET 2,D
+            D |= (1 << 2);
+            break;
+        case 0xD3: // SET 2,E
+            E |= (1 << 2);
+            break;
+        case 0xD4: // SET 2,H
+            H |= (1 << 2);
+            break;
+        case 0xD5: // SET 2,L
+            L |= (1 << 2);
+            break;
+        case 0xD6: // SET 2,[HL]
+            memoryBus.write(getHL(), memoryBus.read(getHL()) | (1 << 2));
+            break;
+        case 0xD7: // SET 2,A
+            A |= (1 << 2);
+            break;
+        case 0xD8: // SET 3,B
+            B |= (1 << 3);
+            break;
+        case 0xD9: // SET 3,C
+            C |= (1 << 3);
+            break;
+        case 0xDA: // SET 3,D
+            D |= (1 << 3);
+            break;
+        case 0xDB: // SET 3,E
+            E |= (1 << 3);
+            break;
+        case 0xDC: // SET 3,H
+            H |= (1 << 3);
+            break;
+        case 0xDD: // SET 3,L
+            L |= (1 << 3);
+            break;
+        case 0xDE: // SET 3,[HL]
+            memoryBus.write(getHL(), memoryBus.read(getHL()) | (1 << 3));
+            break;
+        case 0xDF: // SET 3,A
+            A |= (1 << 3);
+            break;
+        case 0xE0: // SET 4,B
+            B |= (1 << 4);
+            break;
+        case 0xE1: // SET 4,C
+            C |= (1 << 4);
+            break;
+        case 0xE2: // SET 4,D
+            D |= (1 << 4);
+            break;
+        case 0xE3: // SET 4,E
+            E |= (1 << 4);
+            break;
+        case 0xE4: // SET 4,H
+            H |= (1 << 4);
+            break;
+        case 0xE5: // SET 4,L
+            L |= (1 << 4);
+            break;
+        case 0xE6: // SET 4,[HL]
+            memoryBus.write(getHL(), memoryBus.read(getHL()) | (1 << 4));
+            break;
+        case 0xE7: // SET 4,A
+            A |= (1 << 4);
+            break;
+        case 0xE8: // SET 5,B
+            B |= (1 << 5);
+            break;
+        case 0xE9: // SET 5,C
+            C |= (1 << 5);
+            break;
+        case 0xEA: // SET 5,D
+            D |= (1 << 5);
+            break;
+        case 0xEB: // SET 5,E
+            E |= (1 << 5);
+            break;
+        case 0xEC: // SET 5,H
+            H |= (1 << 5);
+            break;
+        case 0xED: // SET 5,L
+            L |= (1 << 5);
+            break;
+        case 0xEE: // SET 5,[HL]
+            memoryBus.write(getHL(), memoryBus.read(getHL()) | (1 << 5));
+            break;
+        case 0xEF: // SET 5,A
+            A |= (1 << 5);
+            break;
+        case 0xF0: // SET 6,B
+            B |= (1 << 6);
+            break;
+        case 0xF1: // SET 6,C
+            C |= (1 << 6);
+            break;
+        case 0xF2: // SET 6,D
+            D |= (1 << 6);
+            break;
+        case 0xF3: // SET 6,E
+            E |= (1 << 6);
+            break;
+        case 0xF4: // SET 6,H
+            H |= (1 << 6);
+            break;
+        case 0xF5: // SET 6,L
+            L |= (1 << 6);
+            break;
+        case 0xF6: // SET 6,[HL]
+            memoryBus.write(getHL(), memoryBus.read(getHL()) | (1 << 6));
+            break;
+        case 0xF7: // SET 6,A
+            A |= (1 << 6);
+            break;
+        case 0xF8: // SET 7,B
+            B |= (1 << 7);
+            break;
+        case 0xF9: // SET 7,C
+            C |= (1 << 7);
+            break;
+        case 0xFA: // SET 7,D
+            D |= (1 << 7);
+            break;
+        case 0xFB: // SET 7,E
+            E |= (1 << 7);
+            break;
+        case 0xFC: // SET 7,H
+            H |= (1 << 7);
+            break;
+        case 0xFD: // SET 7,L
+            L |= (1 << 7);
+            break;
+        case 0xFE: // SET 7,[HL]
+            memoryBus.write(getHL(), memoryBus.read(getHL()) | (1 << 7));
+            break;
+        case 0xFF: // SET 7,A
+            A |= (1 << 7);
+            break;
+        default: // unknown opcode
             break;
     }
 }
@@ -543,9 +927,11 @@ void CPU::step()
             break;
         }
         case 0xCB: // PREFIX
-            // TODO: implement CB prefix control
+            PC++;
+            exec_CB(memoryBus.read(PC));
+            PC++;
             break;
-        case 0xCC: { // CALL n16
+        case 0xCD: { // CALL n16
             PC++;
             uint8_t lo = memoryBus.read(PC);
             PC++;
@@ -557,6 +943,87 @@ void CPU::step()
             SP--;
             memoryBus.write(SP, return_address & 0xFF);
             PC = address;
+            break;
+        }
+        case 0xCF: { // RST $08
+            uint16_t return_address = PC + 1;
+            SP--;
+            memoryBus.write(SP,return_address >> 8);
+            SP--;
+            memoryBus.write(SP, return_address & 0xFF);
+            PC = 8;
+            break;
+        }
+        case 0xD1: { // POP DE
+            uint8_t lo = memoryBus.read(SP);
+            SP++;
+            uint8_t hi = memoryBus.read(SP);
+            SP++;
+            setDE((hi << 8) | lo);
+            PC++;
+            break;
+        }
+        case 0xD7: { // RST $10
+            uint16_t return_address = PC + 1;
+            SP--;
+            memoryBus.write(SP,return_address >> 8);
+            SP--;
+            memoryBus.write(SP, return_address & 0xFF);
+            PC = 16;
+            break;
+        }
+        case 0xDF: { // RST $18
+            uint16_t return_address = PC + 1;
+            SP--;
+            memoryBus.write(SP,return_address >> 8);
+            SP--;
+            memoryBus.write(SP, return_address & 0xFF);
+            PC = 24;
+            break;
+        }
+        case 0xE1: { // POP HL
+            uint8_t lo = memoryBus.read(SP);
+            SP++;
+            uint8_t hi = memoryBus.read(SP);
+            SP++;
+            setHL((hi << 8) | lo);
+            PC++;
+            break;
+        }
+        case 0xE7: { // RST $20
+            uint16_t return_address = PC + 1;
+            SP--;
+            memoryBus.write(SP,return_address >> 8);
+            SP--;
+            memoryBus.write(SP, return_address & 0xFF);
+            PC = 32;
+            break;
+        }
+        case 0xEF: { // RST $28
+            uint16_t return_address = PC + 1;
+            SP--;
+            memoryBus.write(SP,return_address >> 8);
+            SP--;
+            memoryBus.write(SP, return_address & 0xFF);
+            PC = 40;
+            break;
+        }
+        case 0xF7: { // RST $30
+            uint16_t return_address = PC + 1;
+            SP--;
+            memoryBus.write(SP,return_address >> 8);
+            SP--;
+            memoryBus.write(SP, return_address & 0xFF);
+            PC = 48;
+            break;
+        }
+        case 0xFF: { // RST $38
+            uint16_t return_address = PC + 1;
+            SP--;
+            memoryBus.write(SP,return_address >> 8);
+            SP--;
+            memoryBus.write(SP, return_address & 0xFF);
+            PC = 56;
             break;
         }
         default: // unknown opcode
