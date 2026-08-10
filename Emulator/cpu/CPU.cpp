@@ -7,6 +7,22 @@ CPU::CPU(Bus& memoryBus, Debugger& debugger)
 {
 }
 
+void CPU::inc(uint8_t& reg) {
+    uint8_t reg_old = reg;
+    reg += 1;
+    setZ(reg == 0);
+    setN(false);
+    setH((reg_old & 0x0F) == 0x0F);
+}
+
+void CPU::dec(uint8_t& reg) {
+    uint8_t reg_old = reg;
+    reg -= 1;
+    setZ(reg == 0);
+    setN(true);
+    setH((reg_old & 0x0F) == 0x00);
+}
+
 void CPU::exec_CB(uint8_t operation) {
     switch (operation) {
         case 0x80: // RES 0,B
@@ -422,6 +438,14 @@ void CPU::step()
             setBC(getBC() + 1);
             PC++;
             break;
+        case 0x04: // INC B
+            inc(B);
+            PC++;
+            break;
+        case 0x05: // DEC B
+            dec(B);
+            PC++;
+            break;
         case 0x06: // LD B,n8
             PC++;
             B = memoryBus.read(PC);
@@ -444,6 +468,14 @@ void CPU::step()
             break;
         case 0x0B:
             setBC(getBC() - 1);
+            PC++;
+            break;
+        case 0x0C: // INC C
+            inc(C);
+            PC++;
+            break;
+        case 0x0D: // DEC C
+            dec(C);
             PC++;
             break;
         case 0x0E: // LD C,n8
@@ -471,6 +503,14 @@ void CPU::step()
             setDE(getDE() + 1);
             PC++;
             break;
+        case 0x14: // INC D
+            inc(D);
+            PC++;
+            break;
+        case 0x15: // DEC D
+            dec(D);
+            PC++;
+            break;
         case 0x16: // LD D,n8
             PC++;
             D = memoryBus.read(PC);
@@ -488,6 +528,14 @@ void CPU::step()
             break;
         case 0x1B: // DEC DE
             setDE(getDE() - 1);
+            PC++;
+            break;
+        case 0x1C: // INC E
+            inc(E);
+            PC++;
+            break;
+        case 0x1D: // DEC E
+            dec(E);
             PC++;
             break;
         case 0x1E: // LD E,n8
@@ -511,6 +559,10 @@ void CPU::step()
             setHL(getHL() + 1);
             PC++;
             break;
+        case 0x24: // INC H
+            inc(H);
+            PC++;
+            break;
         case 0x26: // LD H,n8
             PC++;
             H = memoryBus.read(PC);
@@ -523,6 +575,10 @@ void CPU::step()
             break;
         case 0x2B: // DEC HL
             setHL(getHL() - 1);
+            PC++;
+            break;
+        case 0x2C: // INC L
+            inc(L);
             PC++;
             break;
         case 0x2E: // LD L,n8
@@ -560,6 +616,10 @@ void CPU::step()
             break;
         case 0x3B: // DEC SP
             SP--;
+            PC++;
+            break;
+        case 0x34: // INC A
+            inc(A);
             PC++;
             break;
         case 0x3E: // LD A,n8

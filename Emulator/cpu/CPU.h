@@ -10,6 +10,7 @@ public:
     void step();
     void exec_CB(uint8_t operation);
 
+    // default register functions
     uint8_t getA() const {
         return A;
     }
@@ -40,6 +41,8 @@ public:
     uint16_t getSP() const {
         return SP;
     }
+
+    // dual-register functions
     uint16_t getBC() const {
         return (B << 8) | C;
     }
@@ -47,6 +50,7 @@ public:
         B = value >> 8;
         C = value & 0xFF;
     }
+
     uint16_t getDE() const {
         return (D << 8) | E;
     }
@@ -54,6 +58,7 @@ public:
         D = value >> 8;
         E = value & 0xFF;
     }
+
     uint16_t getHL() const {
         return (H << 8) | L;
     }
@@ -61,6 +66,25 @@ public:
         H = value >> 8;
         L = value & 0xFF;
     }
+
+    // flag-related functions
+    void setZ(bool value) {
+        F = value ? (F | (1 << 7)) : (F & ~(1 << 7));
+    }
+    void setN(bool value) {
+        F = value ? (F | (1 << 6)) : (F & ~(1 << 6));
+    }
+    void setH(bool value) {
+        F = value ? (F | (1 << 5)) : (F & ~(1 << 5));
+    }
+    void setC(bool value) {
+        F = value ? (F | (1 << 4)) : (F & ~(1 << 4));
+    }
+
+    // instruction functions
+    void inc(uint8_t& reg);
+
+    void dec(uint8_t& reg);
 
 private:
     Bus& memoryBus;
