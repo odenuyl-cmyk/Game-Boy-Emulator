@@ -86,6 +86,10 @@ public:
 
     void dec(uint8_t& reg);
 
+    void add8(uint8_t& reg1, uint8_t& reg2);
+
+    void sub(uint8_t& reg1, uint8_t& reg2);
+
 private:
     Bus& memoryBus;
     Debugger& debugger;

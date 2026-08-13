@@ -23,6 +23,24 @@ void CPU::dec(uint8_t& reg) {
     setH((reg_old & 0x0F) == 0x00);
 }
 
+void CPU::add8(uint8_t &reg1, uint8_t &reg2) {
+    uint8_t result = reg1 + reg2;
+    setZ(result == 0);
+    setN(false);
+    setH((reg1 & 0x0F) + (reg2 & 0x0F) > 0x0F);
+    setC(static_cast<uint16_t>(reg1) + static_cast<uint16_t>(reg2) > 0xFF);
+    reg1 = result;
+}
+
+void CPU::sub(uint8_t &reg1, uint8_t &reg2) {
+    uint8_t result = reg1 - reg2;
+    setZ(result == 0);
+    setN(true);
+    setH((reg1 & 0x0F) < (reg2 & 0x0F));
+    setC(reg1 < reg2);
+    reg1 = result;
+}
+
 void CPU::exec_CB(uint8_t operation) {
     switch (operation) {
         case 0x80: // RES 0,B
@@ -884,73 +902,59 @@ void CPU::step()
             PC++;
             break;
         case 0x80: // ADD A,B
-            // TODO: set flags
-            A += B;
+            add8(A, B);
             PC++;
             break;
         case 0x81: // ADD A,C
-            // TODO: set flags
-            A += C;
+            add8(A, C);
             PC++;
             break;
         case 0x82: // ADD A,D
-            // TODO: set flags
-            A += D;
+            add8(A, D);
             PC++;
             break;
         case 0x83: // ADD A,E
-            // TODO: set flags
-            A += E;
+            add8(A, E);
             PC++;
             break;
         case 0x84: // ADD A,H
-            // TODO: set flags
-            A += H;
+            add8(A, H);
             PC++;
             break;
         case 0x85: // ADD A,L
-            // TODO: set flags
-            A += L;
+            add8(A, L);
             PC++;
             break;
         case 0x87: // ADD A,A
-            // TODO: set flags
-            A += A;
+            add8(A, A);
             PC++;
             break;
         case 0x90: // SUB A,B
-            // TODO: set flags
-            A -= B;
+            sub(A, B);
             PC++;
             break;
         case 0x91: // SUB A,C
-            // TODO: set flags
-            A -= C;
+            sub(A, C);
             PC++;
             break;
         case 0x92: // SUB A,D
-            // TODO: set flags
-            A -= D;
+            sub(A, D);
             PC++;
             break;
         case 0x93: // SUB A,E
-            // TODO: set flags
-            A -= E;
+            sub(A, E);
             PC++;
             break;
         case 0x94: // SUB A,H
-            // TODO: set flags
-            A -= H;
+            sub(A, H);
             PC++;
             break;
         case 0x95: // SUB A,L
-            // TODO: set flags
-            A -= L;
+            sub(A, L);
             PC++;
             break;
         case 0x97: // SUB A,A
-            // TODO: set flags
-            A -= A;
+            sub(A, A);
             PC++;
             break;
         case 0xC1: { // POP BC
