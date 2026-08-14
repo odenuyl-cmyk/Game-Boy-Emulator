@@ -68,17 +68,30 @@ public:
     }
 
     // flag-related functions
-    void setZ(bool value) {
+    void setflag_Z(bool value) {
         F = value ? (F | (1 << 7)) : (F & ~(1 << 7));
     }
-    void setN(bool value) {
+    void setflag_N(bool value) {
         F = value ? (F | (1 << 6)) : (F & ~(1 << 6));
     }
-    void setH(bool value) {
+    void setflag_H(bool value) {
         F = value ? (F | (1 << 5)) : (F & ~(1 << 5));
     }
-    void setC(bool value) {
+    void setflag_C(bool value) {
         F = value ? (F | (1 << 4)) : (F & ~(1 << 4));
+    }
+
+    bool getflag_Z() const {
+        return F & (1 << 7);
+    }
+    bool getflag_N() const {
+        return F & (1 << 6);
+    }
+    bool getflag_H() const {
+        return F & (1 << 5);
+    }
+    bool getflag_C() const {
+        return F & (1 << 4);
     }
 
     // instruction functions
@@ -88,7 +101,21 @@ public:
 
     void add8(uint8_t& reg1, uint8_t& reg2);
 
+    uint16_t add16(uint16_t reg1, uint16_t reg2);
+
     void sub(uint8_t& reg1, uint8_t& reg2);
+
+    void adc(uint8_t& reg1, uint8_t& reg2);
+
+    void sbc(uint8_t& reg1, uint8_t& reg2);
+
+    void AND(uint8_t& reg1, uint8_t& reg2);
+
+    void XOR(uint8_t& reg1, uint8_t& reg2);
+
+    void OR(uint8_t& reg1, uint8_t& reg2);
+
+    void CP(uint8_t& reg1, uint8_t& reg2);
 
 private:
     Bus& memoryBus;

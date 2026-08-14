@@ -10,35 +10,97 @@ CPU::CPU(Bus& memoryBus, Debugger& debugger)
 void CPU::inc(uint8_t& reg) {
     uint8_t reg_old = reg;
     reg += 1;
-    setZ(reg == 0);
-    setN(false);
-    setH((reg_old & 0x0F) == 0x0F);
+    setflag_Z(reg == 0);
+    setflag_N(false);
+    setflag_H((reg_old & 0x0F) == 0x0F);
 }
 
 void CPU::dec(uint8_t& reg) {
     uint8_t reg_old = reg;
     reg -= 1;
-    setZ(reg == 0);
-    setN(true);
-    setH((reg_old & 0x0F) == 0x00);
+    setflag_Z(reg == 0);
+    setflag_N(true);
+    setflag_H((reg_old & 0x0F) == 0x00);
 }
 
 void CPU::add8(uint8_t &reg1, uint8_t &reg2) {
     uint8_t result = reg1 + reg2;
-    setZ(result == 0);
-    setN(false);
-    setH((reg1 & 0x0F) + (reg2 & 0x0F) > 0x0F);
-    setC(static_cast<uint16_t>(reg1) + static_cast<uint16_t>(reg2) > 0xFF);
+    setflag_Z(result == 0);
+    setflag_N(false);
+    setflag_H((reg1 & 0x0F) + (reg2 & 0x0F) > 0x0F);
+    setflag_C(static_cast<uint16_t>(reg1) + static_cast<uint16_t>(reg2) > 0xFF);
     reg1 = result;
+}
+
+uint16_t CPU::add16(uint16_t reg1, uint16_t reg2) {
+    setflag_N(false);
+    setflag_H((reg1 & 0x0FFF) + (reg2 & 0x0FFF) > 0x0FFF);
+    setflag_C(static_cast<uint32_t>(reg1) + static_cast<uint32_t>(reg2) > 0xFFFF);
+    return reg1 + reg2;
 }
 
 void CPU::sub(uint8_t &reg1, uint8_t &reg2) {
     uint8_t result = reg1 - reg2;
-    setZ(result == 0);
-    setN(true);
-    setH((reg1 & 0x0F) < (reg2 & 0x0F));
-    setC(reg1 < reg2);
+    setflag_Z(result == 0);
+    setflag_N(true);
+    setflag_H((reg1 & 0x0F) < (reg2 & 0x0F));
+    setflag_C(reg1 < reg2);
     reg1 = result;
+}
+
+void CPU::adc(uint8_t &reg1, uint8_t &reg2) {
+    bool old_C = getflag_C();
+    uint8_t result = reg1 + reg2 + old_C;
+    setflag_Z(result == 0);
+    setflag_N(false);
+    setflag_H((reg1 & 0x0F) + (reg2 & 0x0F) + old_C > 0x0F);
+    setflag_C(static_cast<uint16_t>(reg1) + static_cast<uint16_t>(reg2) + old_C > 0xFF);
+    reg1 = result;
+}
+
+void CPU::sbc(uint8_t &reg1, uint8_t &reg2) {
+    bool old_C = getflag_C();
+    uint8_t result = reg1 - reg2 - old_C;
+    setflag_Z(result == 0);
+    setflag_N(true);
+    setflag_H((reg1 & 0x0F) < (reg2 & 0x0F) + old_C);
+    setflag_C(reg1 < reg2 + old_C);
+    reg1 = result;
+}
+
+void CPU::AND(uint8_t &reg1, uint8_t &reg2) {
+    uint8_t result = reg1 & reg2;
+    setflag_Z(result == 0);
+    setflag_N(false);
+    setflag_H(true);
+    setflag_C(false);
+    reg1 = result;
+}
+
+void CPU::XOR(uint8_t &reg1, uint8_t &reg2) {
+    uint8_t result = reg1 ^ reg2;
+    setflag_Z(result == 0);
+    setflag_N(false);
+    setflag_H(false);
+    setflag_C(false);
+    reg1 = result;
+}
+
+void CPU::OR(uint8_t &reg1, uint8_t &reg2) {
+    uint8_t result = reg1 | reg2;
+    setflag_Z(result == 0);
+    setflag_N(false);
+    setflag_H(false);
+    setflag_C(false);
+    reg1 = result;
+}
+
+void CPU::CP(uint8_t &reg1, uint8_t &reg2) {
+    uint8_t result = reg1 - reg2;
+    setflag_Z(result == 0);
+    setflag_N(true);
+    setflag_H((reg1 & 0x0F) < (reg2 & 0x0F));
+    setflag_C(reg1 < reg2);
 }
 
 void CPU::exec_CB(uint8_t operation) {
@@ -469,6 +531,16 @@ void CPU::step()
             B = memoryBus.read(PC);
             PC++;
             break;
+        case 0x07: { // RLCA
+            bool old_bit7 = A & 0x80;
+            A = (A << 1) | (A >> 7);
+            setflag_Z(false);
+            setflag_N(false);
+            setflag_H(false);
+            setflag_C(old_bit7);
+            PC++;
+            break;
+        }
         case 0x08: { // LD [n16],SP
             PC++;
             uint8_t lo = memoryBus.read(PC);
@@ -480,6 +552,10 @@ void CPU::step()
             PC++;
             break;
         }
+        case 0x09: // ADD HL,BC
+            setHL(add16(getHL(), getBC()));
+            PC++;
+            break;
         case 0x0A: // LD A,[BC]
             A = memoryBus.read(getBC());
             PC++;
@@ -501,6 +577,16 @@ void CPU::step()
             C = memoryBus.read(PC);
             PC++;
             break;
+        case 0x0F: { // RRCA
+            bool old_bit0 = A & 0x01;
+            A = (A >> 1) | (A << 7);
+            setflag_Z(false);
+            setflag_N(false);
+            setflag_H(false);
+            setflag_C(old_bit0);
+            PC++;
+            break;
+        }
         case 0x10: // STOP n8
             PC++;
             // TODO: stop CPU
@@ -534,12 +620,27 @@ void CPU::step()
             D = memoryBus.read(PC);
             PC++;
             break;
+        case 0x17: { // RLA
+            bool old_bit7 = A & 0x80;
+            A = (A << 1) | (getflag_C());
+            setflag_Z(false);
+            setflag_N(false);
+            setflag_H(false);
+            setflag_C(old_bit7);
+            PC++;
+            break;
+        }
         case 0x18: { // JR n8 (signed)
             PC++;
             auto offset = static_cast<int8_t>(memoryBus.read(PC));
+            PC++;
             PC += offset;
             break;
         }
+        case 0x19: // ADD HL,DE
+            setHL(add16(getHL(), getDE()));
+            PC++;
+            break;
         case 0x1A: // LD A,[DE]
             A = memoryBus.read(getDE());
             PC++;
@@ -561,6 +662,25 @@ void CPU::step()
             E = memoryBus.read(PC);
             PC++;
             break;
+        case 0x1F: { // RRA
+            bool old_bit0 = A & 0x01;
+            A = (A >> 1) | (getflag_C() << 7);
+            setflag_Z(false);
+            setflag_N(false);
+            setflag_H(false);
+            setflag_C(old_bit0);
+            PC++;
+            break;
+        }
+        case 0x20: { // JR NZ n8 (signed)
+            PC++;
+            auto offset = static_cast<int8_t>(memoryBus.read(PC));
+            PC++;
+            if (!getflag_Z()) {
+                PC += offset;
+            }
+            break;
+        }
         case 0x21: // LD HL,n16
             PC++;
             L = memoryBus.read(PC);
@@ -581,9 +701,28 @@ void CPU::step()
             inc(H);
             PC++;
             break;
+        case 0x25: // DEC H
+            dec(H);
+            PC++;
+            break;
         case 0x26: // LD H,n8
             PC++;
             H = memoryBus.read(PC);
+            PC++;
+            break;
+        case 0x27: // DAA
+            // TODO: implement this operation
+        case 0x28: { // JR Z n8 (signed)
+            PC++;
+            auto offset = static_cast<int8_t>(memoryBus.read(PC));
+            PC++;
+            if (getflag_Z()) {
+                PC += offset;
+            }
+            break;
+        }
+        case 0x29: // ADD HL,HL
+            setHL(add16(getHL(), getHL()));
             PC++;
             break;
         case 0x2A: // LD A,[HL+]
@@ -599,11 +738,26 @@ void CPU::step()
             inc(L);
             PC++;
             break;
+        case 0x2D: // DEC L
+            dec(L);
+            PC++;
+            break;
         case 0x2E: // LD L,n8
             PC++;
             L = memoryBus.read(PC);
             PC++;
             break;
+        case 0x2F: // CPL
+            // TODO: implement CPL
+        case 0x30: { // JR NC n8 (signed)
+            PC++;
+            auto offset = static_cast<int8_t>(memoryBus.read(PC));
+            PC++;
+            if (!getflag_C()) {
+                PC += offset;
+            }
+            break;
+        }
         case 0x31: { // LD SP,n16
             PC++;
             uint8_t lo = memoryBus.read(PC);
@@ -622,9 +776,38 @@ void CPU::step()
             SP++;
             PC++;
             break;
+        case 0x34: { // INC [HL]
+            uint8_t value = memoryBus.read(getHL());
+            inc(value);
+            memoryBus.write(getHL(), value);
+            PC++;
+            break;
+        }
+        case 0x35: { // DEC [HL]
+            uint8_t value = memoryBus.read(getHL());
+            dec(value);
+            memoryBus.write(getHL(), value);
+            PC++;
+            break;
+        }
         case 0x36: // LD [HL],n8
             PC++;
             memoryBus.write(getHL(), memoryBus.read(PC));
+            PC++;
+            break;
+        case 0x37: // SCF
+            // TODO: implement SCF
+        case 0x38: { // JR C n8 (signed)
+            PC++;
+            auto offset = static_cast<int8_t>(memoryBus.read(PC));
+            PC++;
+            if (getflag_C()) {
+                PC += offset;
+            }
+            break;
+        }
+        case 0x39: // ADD HL,SP
+            setHL(add16(getHL(), getSP()));
             PC++;
             break;
         case 0x3A: // LD A,[HL-]
@@ -636,8 +819,12 @@ void CPU::step()
             SP--;
             PC++;
             break;
-        case 0x34: // INC A
+        case 0x3C: // INC A
             inc(A);
+            PC++;
+            break;
+        case 0x3D: // DEC A
+            dec(A);
             PC++;
             break;
         case 0x3E: // LD A,n8
@@ -645,6 +832,8 @@ void CPU::step()
             A = memoryBus.read(PC);
             PC++;
             break;
+        case 0x3F: // CCF
+            // TODO: implement CCF
         case 0x40: // LD B,B
             B = B;
             PC++;
@@ -929,6 +1118,40 @@ void CPU::step()
             add8(A, A);
             PC++;
             break;
+        case 0x88: // ADC A,B
+            adc(A, B);
+            PC++;
+            break;
+        case 0x89: // ADC A,C
+            adc(A, C);
+            PC++;
+            break;
+        case 0x8A: // ADC A,D
+            adc(A, D);
+            PC++;
+            break;
+        case 0x8B: // ADC A,E
+            adc(A, E);
+            PC++;
+            break;
+        case 0x8C: // ADC A,H
+            adc(A, H);
+            PC++;
+            break;
+        case 0x8D: // ADC A,L
+            adc(A, L);
+            PC++;
+            break;
+        case 0x8E: { // ADC A,[HL]
+            uint8_t value = memoryBus.read(getHL());
+            adc(A, value);
+            PC++;
+            break;
+        }
+        case 0x8F: // ADC A,A
+            adc(A, A);
+            PC++;
+            break;
         case 0x90: // SUB A,B
             sub(A, B);
             PC++;
@@ -953,10 +1176,198 @@ void CPU::step()
             sub(A, L);
             PC++;
             break;
+        case 0x96: { // SUB A,[HL]
+            uint8_t value = memoryBus.read(getHL());
+            sub(A, value);
+            PC++;
+            break;
+        }
         case 0x97: // SUB A,A
             sub(A, A);
             PC++;
             break;
+        case 0x98: // SBC A,B
+            sbc(A, B);
+            PC++;
+            break;
+        case 0x99: // SBC A,C
+            sbc(A, C);
+            PC++;
+            break;
+        case 0x9A: // SBC A,D
+            sbc(A, D);
+            PC++;
+            break;
+        case 0x9B: // SBC A,E
+            sbc(A, H);
+            PC++;
+            break;
+        case 0x9C: // SBC A,H
+            sbc(A, H);
+            PC++;
+            break;
+        case 0x9D: // SBC A,L
+            sbc(A, L);
+            PC++;
+            break;
+        case 0x9E: { // SBC A,[HL]
+            uint8_t value = memoryBus.read(getHL());
+            sbc(A, value);
+            PC++;
+            break;
+        }
+        case 0x9F: // SBC A,A
+            sbc(A, A);
+            PC++;
+            break;
+        case 0xA0: // AND A,B
+            AND(A, B);
+            PC++;
+            break;
+        case 0xA1: // AND A,C
+            AND(A, C);
+            PC++;
+            break;
+        case 0xA2: // AND A,D
+            AND(A, D);
+            PC++;
+            break;
+        case 0xA3: // AND A,E
+            AND(A, E);
+            PC++;
+            break;
+        case 0xA4: // AND A,H
+            AND(A, H);
+            PC++;
+            break;
+        case 0xA5: // AND A,L
+            AND(A, L);
+            PC++;
+            break;
+        case 0xA6: { // AND A,[HL]
+            uint8_t value = memoryBus.read(getHL());
+            AND(A, value);
+            PC++;
+            break;
+        }
+        case 0xA7: // AND A,A
+            AND(A, A);
+            PC++;
+            break;
+        case 0xA8: // XOR A,B
+            XOR(A, B);
+            PC++;
+            break;
+        case 0xA9: // XOR A,C
+            XOR(A, C);
+            PC++;
+            break;
+        case 0xAA: // XOR A,D
+            XOR(A, D);
+            PC++;
+            break;
+        case 0xAB: // XOR A,E
+            XOR(A, E);
+            PC++;
+            break;
+        case 0xAC: // XOR A,H
+            XOR(A, H);
+            PC++;
+            break;
+        case 0xAD: // XOR A,L
+            XOR(A, L);
+            PC++;
+            break;
+        case 0xAE: { // XOR A,[HL]
+            uint8_t value = memoryBus.read(getHL());
+            XOR(A, value);
+            PC++;
+            break;
+        }
+        case 0xAF: // XOR A,A
+            XOR(A, A);
+            PC++;
+            break;
+        case 0xB0: // OR A,B
+            OR(A, B);
+            PC++;
+            break;
+        case 0xB1: // OR A,C
+            OR(A, C);
+            PC++;
+            break;
+        case 0xB2: // OR A,D
+            OR(A, D);
+            PC++;
+            break;
+        case 0xB3: // OR A,E
+            OR(A, E);
+            PC++;
+            break;
+        case 0xB4: // OR A,H
+            OR(A, H);
+            PC++;
+            break;
+        case 0xB5: // OR A,L
+            OR(A, L);
+            PC++;
+            break;
+        case 0xB6: { // OR A,[HL]
+            uint8_t value = memoryBus.read(getHL());
+            OR(A, value);
+            PC++;
+            break;
+        }
+        case 0xB7: // OR A,A
+            OR(A, A);
+            PC++;
+            break;
+        case 0xB8: // CP A,B
+            CP(A, B);
+            PC++;
+            break;
+        case 0xB9: // CP A,C
+            CP(A, C);
+            PC++;
+            break;
+        case 0xBA: // CP A,D
+            CP(A, D);
+            PC++;
+            break;
+        case 0xBB: // CP A,E
+            CP(A, E);
+            PC++;
+            break;
+        case 0xBC: // CP A,H
+            CP(A, H);
+            PC++;
+            break;
+        case 0xBD: // CP A,L
+            CP(A, L);
+            PC++;
+            break;
+        case 0xBE: { // CP A,[HL]
+            uint8_t value = memoryBus.read(getHL());
+            CP(A, value);
+            PC++;
+            break;
+        }
+        case 0xBF: // CP A,A
+            CP(A, A);
+            PC++;
+            break;
+        case 0xC0: { // RET NZ
+            if (!getflag_Z()) {
+                uint8_t lo = memoryBus.read(SP);
+                SP++;
+                uint8_t hi = memoryBus.read(SP);
+                SP++;
+                PC = (hi << 8) | lo;
+            } else {
+                PC++;
+            }
+            break;
+        }
         case 0xC1: { // POP BC
             uint8_t lo = memoryBus.read(SP);
             SP++;
