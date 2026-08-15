@@ -125,6 +125,8 @@ public:
 
     void CP(uint8_t& reg1, uint8_t& reg2);
 
+    void CB_BIT(uint8_t bitNum, uint8_t& reg);
+
 private:
     Bus& memoryBus;
     Debugger& debugger;

@@ -106,8 +106,223 @@ void CPU::CP(uint8_t &reg1, uint8_t &reg2) {
     setflag_C(reg1 < reg2);
 }
 
+void CPU::CB_BIT(uint8_t bitNum, uint8_t &reg) {
+    uint8_t bit = reg & (1 << bitNum);
+    setflag_Z(bit == 0);
+    setflag_N(false);
+    setflag_H(true);
+}
+
 void CPU::exec_CB(uint8_t operation) {
     switch (operation) {
+        case 0x40: // BIT 0,B
+            CB_BIT(0, B);
+            break;
+        case 0x41: // BIT 0,C
+            CB_BIT(0, C);
+            break;
+        case 0x42: // BIT 0,D
+            CB_BIT(0, D);
+            break;
+        case 0x43: // BIT 0,E
+            CB_BIT(0, E);
+            break;
+        case 0x44: // BIT 0,H
+            CB_BIT(0, H);
+            break;
+        case 0x45: // BIT 0,L
+            CB_BIT(0, L);
+            break;
+        case 0x46: { // BIT 0,[HL
+            uint8_t value = memoryBus.read(getHL());
+            CB_BIT(0, value);
+            break;
+        }
+        case 0x47: // BIT 0,A
+            CB_BIT(0, A);
+            break;
+        case 0x48: // BIT 1,B
+            CB_BIT(1, B);
+            break;
+        case 0x49: // BIT 1,C
+            CB_BIT(1, C);
+            break;
+        case 0x4A: // BIT 1,D
+            CB_BIT(1, D);
+            break;
+        case 0x4B: // BIT 1,E
+            CB_BIT(1, E);
+            break;
+        case 0x4C: // BIT 1,H
+            CB_BIT(1, H);
+            break;
+        case 0x4D: // BIT 1,L
+            CB_BIT(1, L);
+            break;
+        case 0x4E: { // BIT 1,[HL]
+            uint8_t value = memoryBus.read(getHL());
+            CB_BIT(1, value);
+            break;
+        }
+        case 0x4F: // BIT 1,A
+            CB_BIT(1, A);
+            break;
+        case 0x50: // BIT 2,B
+            CB_BIT(2, B);
+            break;
+        case 0x51: // BIT 2,C
+            CB_BIT(2, C);
+            break;
+        case 0x52: // BIT 2,D
+            CB_BIT(2, D);
+            break;
+        case 0x53: // BIT 2,E
+            CB_BIT(2, E);
+            break;
+        case 0x54: // BIT 2,H
+            CB_BIT(2, H);
+            break;
+        case 0x55: // BIT 2,L
+            CB_BIT(2, L);
+            break;
+        case 0x56: { // BIT 2,[HL]
+            uint8_t value = memoryBus.read(getHL());
+            CB_BIT(2, value);
+            break;
+        }
+        case 0x57: // BIT 2,A
+            CB_BIT(2, A);
+            break;
+        case 0x58: // BIT 3,B
+            CB_BIT(3, B);
+            break;
+        case 0x59: // BIT 3,C
+            CB_BIT(3, C);
+            break;
+        case 0x5A: // BIT 3,D
+            CB_BIT(3, D);
+            break;
+        case 0x5B: // BIT 3,E
+            CB_BIT(3, E);
+            break;
+        case 0x5C: // BIT 3,H
+            CB_BIT(3, H);
+            break;
+        case 0x5D: // BIT 3,L
+            CB_BIT(3, L);
+            break;
+        case 0x5E: { // BIT 3,[HL]
+            uint8_t value = memoryBus.read(getHL());
+            CB_BIT(3, value);
+            break;
+        }
+        case 0x5F: // BIT 3,A
+            CB_BIT(3, A);
+            break;
+        case 0x60: // BIT 4,B
+            CB_BIT(4, B);
+            break;
+        case 0x61: // BIT 4,C
+            CB_BIT(4, C);
+            break;
+        case 0x62: // BIT 4,D
+            CB_BIT(4, D);
+            break;
+        case 0x63: // BIT 4,E
+            CB_BIT(4, E);
+            break;
+        case 0x64: // BIT 4,H
+            CB_BIT(4, H);
+            break;
+        case 0x65: // BIT 4,L
+            CB_BIT(4, L);
+            break;
+        case 0x66: { // BIT 4,[HL]
+            uint8_t value = memoryBus.read(getHL());
+            CB_BIT(4, value);
+            break;
+        }
+        case 0x67: // BIT 4,A
+            CB_BIT(4, A);
+            break;
+        case 0x68: // BIT 5,B
+            CB_BIT(5, B);
+            break;
+        case 0x69: // BIT 5,C
+            CB_BIT(5, C);
+            break;
+        case 0x6A: // BIT 5,D
+            CB_BIT(5, D);
+            break;
+        case 0x6B: // BIT 5,E
+            CB_BIT(5, E);
+            break;
+        case 0x6C: // BIT 5,H
+            CB_BIT(5, H);
+            break;
+        case 0x6D: // BIT 5,L
+            CB_BIT(5, L);
+            break;
+        case 0x6E: { // BIT 5,[HL]
+            uint8_t value = memoryBus.read(getHL());
+            CB_BIT(5, value);
+            break;
+        }
+        case 0x6F: // BIT 5,A
+            CB_BIT(5, A);
+            break;
+        case 0x70: // BIT 6,B
+            CB_BIT(6, B);
+            break;
+        case 0x71: // BIT 6,C
+            CB_BIT(6, C);
+            break;
+        case 0x72: // BIT 6,D
+            CB_BIT(6, D);
+            break;
+        case 0x73: // BIT 6,E
+            CB_BIT(6, E);
+            break;
+        case 0x74: // BIT 6,H
+            CB_BIT(6, H);
+            break;
+        case 0x75: // BIT 6,L
+            CB_BIT(6, L);
+            break;
+        case 0x76: { // BIT 6,[HL]
+            uint8_t value = memoryBus.read(getHL());
+            CB_BIT(6, value);
+            break;
+        }
+        case 0x77: // BIT 6,A
+            CB_BIT(6, A);
+            break;
+        case 0x78: // BIT 7,B
+            CB_BIT(7, B);
+            break;
+        case 0x79: // BIT 7,C
+            CB_BIT(7, C);
+            break;
+        case 0x7A: // BIT 7,D
+            CB_BIT(7, D);
+            break;
+        case 0x7B: // BIT 7,E
+            CB_BIT(7, E);
+            break;
+        case 0x7C: // BIT 7,H
+            CB_BIT(7, H);
+            break;
+        case 0x7D: // BIT 7,L
+            CB_BIT(7, L);
+            break;
+        case 0x7E: { // BIT 7,[HL]
+            uint8_t value = memoryBus.read(getHL());
+            CB_BIT(7, value);
+            break;
+        }
+        case 0x7F: // BIT 7,A
+            CB_BIT(7, A);
+            break;
         case 0x80: // RES 0,B
             B &= ~(1 << 0);
             break;
@@ -1608,6 +1823,7 @@ void CPU::step()
             break;
         }
         case 0xD3: { // no operation listed
+            PC++;
             break;
         }
         case 0xD4: { // CALL NC n16
@@ -1680,6 +1896,7 @@ void CPU::step()
             break;
         }
         case 0xDB: // no operation listed
+            PC++;
             break;
         case 0xDC: { // CALL C n16
             PC++;
@@ -1700,6 +1917,7 @@ void CPU::step()
             break;
         }
         case 0xDD: // no operation listed
+            PC++;
             break;
         case 0xDE: { // SBC A,n8
             PC++;
@@ -1717,6 +1935,13 @@ void CPU::step()
             PC = 24;
             break;
         }
+        case 0xE0: { // LDH [n8],A
+            PC++;
+            uint8_t adj = memoryBus.read(PC);
+            memoryBus.write(0xFF00 + adj, A);
+            PC++;
+            break;
+        }
         case 0xE1: { // POP HL
             uint8_t lo = memoryBus.read(SP);
             SP++;
@@ -1726,6 +1951,16 @@ void CPU::step()
             PC++;
             break;
         }
+        case 0xE2: // LDH [C],A
+            memoryBus.write(0xFF00 + C, A);
+            PC++;
+            break;
+        case 0xE3: // no operation listed
+            PC++;
+            break;
+        case 0xE4: // no operation listed
+            PC++;
+            break;
         case 0xE5: // PUSH HL
             SP--;
             memoryBus.write(SP, getHL() >> 8);
@@ -1749,8 +1984,38 @@ void CPU::step()
             PC = 32;
             break;
         }
+        case 0xE8: { // ADD SP,n8
+            PC++;
+            auto offset = static_cast<int8_t>(memoryBus.read(PC));
+            setflag_Z(false);
+            setflag_N(false);
+            setflag_H((SP & 0x0F) + (offset & 0x0F) > 0x0F);
+            setflag_C(static_cast<uint16_t>(SP & 0xFF) + static_cast<uint16_t>(offset & 0xFF) > 0x00FF);
+            SP += offset;
+            PC++;
+            break;
+        }
         case 0xE9: // JP HL
             PC = getHL();
+            break;
+        case 0xEA: { // LD [n16],A
+            PC++;
+            uint8_t lo = memoryBus.read(PC);
+            PC++;
+            uint8_t hi = memoryBus.read(PC);
+            uint16_t address = (hi << 8) | lo;
+            memoryBus.write(address, A);
+            PC++;
+            break;
+        }
+        case 0xEB: // no operation listed
+            PC++;
+            break;
+        case 0xEC: // no operation listed
+            PC++;
+            break;
+        case 0xED: // no operation listed
+            PC++;
             break;
         case 0xEE: { // XOR A,n8
             PC++;
@@ -1768,6 +2033,13 @@ void CPU::step()
             PC = 40;
             break;
         }
+        case 0xF0: { // LDH A,[n8]
+            PC++;
+            uint8_t adj = memoryBus.read(PC);
+            A = memoryBus.read(0xFF00 + adj);
+            PC++;
+            break;
+        }
         case 0xF1: { // POP AF
             uint8_t lo = memoryBus.read(SP);
             SP++;
@@ -1777,6 +2049,18 @@ void CPU::step()
             PC++;
             break;
         }
+        case 0xF2: // LDH A,[C]
+            A = memoryBus.read(0xFF00 + C);
+            PC++;
+            break;
+        case 0xF3: { // DI
+            // TODO: implement interrupts
+            PC++;
+            break;
+        }
+        case 0xF4: // no operation listed
+            PC++;
+            break;
         case 0xF5: // PUSH AF
             SP--;
             memoryBus.write(SP, getAF() >> 8);
@@ -1800,12 +2084,39 @@ void CPU::step()
             PC = 48;
             break;
         }
+        case 0xF8: {
+            PC++;
+            auto offset = static_cast<int8_t>(memoryBus.read(PC));
+            setflag_Z(false);
+            setflag_N(false);
+            setflag_H((SP & 0x0F) + (offset & 0x0F) > 0x0F);
+            setflag_C(static_cast<uint16_t>(SP & 0xFF) + static_cast<uint16_t>(offset & 0xFF) > 0x00FF);
+            setHL(SP + offset);
+            PC++;
+            break;
+        }
+        case 0xF9: // LD SP,HL
+            SP = getHL();
+            PC++;
+            break;
+        case 0xFA: { // LD A,[n16]
+            PC++;
+            uint8_t lo = memoryBus.read(PC);
+            PC++;
+            uint8_t hi = memoryBus.read(PC);
+            uint16_t address = (hi << 8) | lo;
+            A = memoryBus.read(address);
+            PC++;
+            break;
+        }
         case 0xFB: // EI
             // TODO: implement interrupts
             break;
         case 0xFC: // no operation listed
+            PC++;
             break;
         case 0xFD: // no operation listed
+            PC++;
             break;
         case 0xFE: { // CP A,n8
             PC++;
