@@ -11,39 +11,39 @@ public:
     void exec_CB(uint8_t operation);
 
     // default register functions
-    uint8_t getA() const {
+    [[nodiscard]] uint8_t getA() const {
         return A;
     }
-    uint8_t getB() const {
+    [[nodiscard]] uint8_t getB() const {
         return B;
     }
-    uint8_t getC() const {
+    [[nodiscard]] uint8_t getC() const {
         return C;
     }
-    uint8_t getD() const {
+    [[nodiscard]] uint8_t getD() const {
         return D;
     }
-    uint8_t getE() const {
+    [[nodiscard]] uint8_t getE() const {
         return E;
     }
-    uint8_t getF() const {
+    [[nodiscard]] uint8_t getF() const {
         return F;
     }
-    uint8_t getH() const {
+    [[nodiscard]] uint8_t getH() const {
         return H;
     }
-    uint8_t getL() const {
+    [[nodiscard]] uint8_t getL() const {
         return L;
     }
-    uint16_t getPC() const {
+    [[nodiscard]] uint16_t getPC() const {
         return PC;
     }
-    uint16_t getSP() const {
+    [[nodiscard]] uint16_t getSP() const {
         return SP;
     }
 
     // dual-register functions
-    uint16_t getBC() const {
+    [[nodiscard]] uint16_t getBC() const {
         return (B << 8) | C;
     }
     void setBC(uint16_t value) {
@@ -51,7 +51,7 @@ public:
         C = value & 0xFF;
     }
 
-    uint16_t getDE() const {
+    [[nodiscard]] uint16_t getDE() const {
         return (D << 8) | E;
     }
     void setDE(uint16_t value) {
@@ -59,12 +59,20 @@ public:
         E = value & 0xFF;
     }
 
-    uint16_t getHL() const {
+    [[nodiscard]] uint16_t getHL() const {
         return (H << 8) | L;
     }
     void setHL(uint16_t value) {
         H = value >> 8;
         L = value & 0xFF;
+    }
+
+    [[nodiscard]] uint16_t getAF() const {
+        return (A << 8) | F;
+    }
+    void setAF(uint16_t value) {
+        A = value >> 8;
+        F = value & 0xF0;
     }
 
     // flag-related functions
@@ -81,16 +89,16 @@ public:
         F = value ? (F | (1 << 4)) : (F & ~(1 << 4));
     }
 
-    bool getflag_Z() const {
+    [[nodiscard]] bool getflag_Z() const {
         return F & (1 << 7);
     }
-    bool getflag_N() const {
+    [[nodiscard]] bool getflag_N() const {
         return F & (1 << 6);
     }
-    bool getflag_H() const {
+    [[nodiscard]] bool getflag_H() const {
         return F & (1 << 5);
     }
-    bool getflag_C() const {
+    [[nodiscard]] bool getflag_C() const {
         return F & (1 << 4);
     }
 

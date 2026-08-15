@@ -1,4 +1,7 @@
 #include "CPU.h"
+
+#include <regex>
+
 #include "../memory/Bus.h"
 #include "../debug/Debugger.h"
 
@@ -710,8 +713,34 @@ void CPU::step()
             H = memoryBus.read(PC);
             PC++;
             break;
-        case 0x27: // DAA
-            // TODO: implement this operation
+        case 0x27: { // DAA
+            bool N = getflag_N();
+            bool H = getflag_H();
+            bool C = getflag_C();
+            uint8_t adj = 0;
+            if (N) {
+                if (H) {
+                    adj += 0x06;
+                }
+                if (C) {
+                    adj += 0x60;
+                }
+                A -= adj;
+            } else {
+                if (H || ((A & 0x0F) > 0x09)) {
+                    adj += 0x06;
+                }
+                if (C || (A > 0x99)) {
+                    adj += 0x60;
+                    setflag_C(true);
+                }
+                A += adj;
+            }
+            setflag_Z(A == 0);
+            setflag_H(false);
+            PC++;
+            break;
+        }
         case 0x28: { // JR Z n8 (signed)
             PC++;
             auto offset = static_cast<int8_t>(memoryBus.read(PC));
@@ -748,7 +777,11 @@ void CPU::step()
             PC++;
             break;
         case 0x2F: // CPL
-            // TODO: implement CPL
+            A = ~A;
+            setflag_N(true);
+            setflag_H(true);
+            PC++;
+            break;
         case 0x30: { // JR NC n8 (signed)
             PC++;
             auto offset = static_cast<int8_t>(memoryBus.read(PC));
@@ -796,7 +829,11 @@ void CPU::step()
             PC++;
             break;
         case 0x37: // SCF
-            // TODO: implement SCF
+            setflag_N(false);
+            setflag_H(false);
+            setflag_C(true);
+            PC++;
+            break;
         case 0x38: { // JR C n8 (signed)
             PC++;
             auto offset = static_cast<int8_t>(memoryBus.read(PC));
@@ -833,7 +870,11 @@ void CPU::step()
             PC++;
             break;
         case 0x3F: // CCF
-            // TODO: implement CCF
+            setflag_N(false);
+            setflag_H(false);
+            setflag_C(!getflag_C());
+            PC++;
+            break;
         case 0x40: // LD B,B
             B = B;
             PC++;
@@ -1114,6 +1155,12 @@ void CPU::step()
             add8(A, L);
             PC++;
             break;
+        case 0x86: { // ADD A,[HL]
+            uint8_t value = memoryBus.read(getHL());
+            add8(A, value);
+            PC++;
+            break;
+        }
         case 0x87: // ADD A,A
             add8(A, A);
             PC++;
@@ -1199,7 +1246,7 @@ void CPU::step()
             PC++;
             break;
         case 0x9B: // SBC A,E
-            sbc(A, H);
+            sbc(A, E);
             PC++;
             break;
         case 0x9C: // SBC A,H
@@ -1377,6 +1424,46 @@ void CPU::step()
             PC++;
             break;
         }
+        case 0xC2: { // JP NZ n16
+            PC++;
+            uint8_t lo = memoryBus.read(PC);
+            PC++;
+            uint8_t hi = memoryBus.read(PC);
+            uint16_t address = hi << 8 | lo;
+            if (!getflag_Z()) {
+                PC = address;
+            } else {
+                PC++;
+            }
+            break;
+        }
+        case 0xC3: { // JP n16
+            PC++;
+            uint8_t lo = memoryBus.read(PC);
+            PC++;
+            uint8_t hi = memoryBus.read(PC);
+            uint16_t address = hi << 8 | lo;
+            PC = address;
+            break;
+        }
+        case 0xC4: { // CALL NZ n16
+            PC++;
+            uint8_t lo = memoryBus.read(PC);
+            PC++;
+            uint8_t hi = memoryBus.read(PC);
+            uint16_t address = (hi << 8) | lo;
+            if (!getflag_Z()) {
+                uint16_t return_address = PC + 1;
+                SP--;
+                memoryBus.write(SP, return_address >> 8);
+                SP--;
+                memoryBus.write(SP, return_address & 0xFF);
+                PC = address;
+            } else {
+                PC++;
+            }
+            break;
+        }
         case 0xC5: // PUSH BC
             SP--;
             memoryBus.write(SP, getBC() >> 8);
@@ -1384,6 +1471,13 @@ void CPU::step()
             memoryBus.write(SP, getBC() & 0xFF);
             PC++;
             break;
+        case 0xC6: { // ADD A,n8
+            PC++;
+            uint8_t value = memoryBus.read(PC);
+            add8(A,value);
+            PC++;
+            break;
+        }
         case 0xC7: { // RST $00
             uint16_t return_address = PC + 1;
             SP--;
@@ -1391,6 +1485,18 @@ void CPU::step()
             SP--;
             memoryBus.write(SP, return_address & 0xFF);
             PC = 0;
+            break;
+        }
+        case 0xC8: { // RET Z
+            if (getflag_Z()) {
+                uint8_t lo = memoryBus.read(SP);
+                SP++;
+                uint8_t hi = memoryBus.read(SP);
+                SP++;
+                PC = (hi << 8) | lo;
+            } else {
+                PC++;
+            }
             break;
         }
         case 0xC9: { // RET
@@ -1401,11 +1507,42 @@ void CPU::step()
             PC = (hi << 8) | lo;
             break;
         }
+        case 0xCA: { // JP Z n16
+            PC++;
+            uint8_t lo = memoryBus.read(PC);
+            PC++;
+            uint8_t hi = memoryBus.read(PC);
+            uint16_t address = (hi << 8) | lo;
+            if (getflag_Z()) {
+                PC = address;
+            } else {
+                PC++;
+            }
+            break;
+        }
         case 0xCB: // PREFIX
             PC++;
             exec_CB(memoryBus.read(PC));
             PC++;
             break;
+        case 0xCC: { // CALL Z n16
+            PC++;
+            uint8_t lo = memoryBus.read(PC);
+            PC++;
+            uint8_t hi = memoryBus.read(PC);
+            uint16_t address = (hi << 8) | lo;
+            if (getflag_Z()) {
+                uint16_t return_address = PC + 1;
+                SP--;
+                memoryBus.write(SP, return_address >> 8);
+                SP--;
+                memoryBus.write(SP, return_address & 0xFF);
+                PC = address;
+            } else {
+                PC++;
+            }
+            break;
+        }
         case 0xCD: { // CALL n16
             PC++;
             uint8_t lo = memoryBus.read(PC);
@@ -1420,6 +1557,13 @@ void CPU::step()
             PC = address;
             break;
         }
+        case 0xCE: { // ADC A,n8
+            PC++;
+            uint8_t value = memoryBus.read(PC);
+            adc(A, value);
+            PC++;
+            break;
+        }
         case 0xCF: { // RST $08
             uint16_t return_address = PC + 1;
             SP--;
@@ -1427,6 +1571,18 @@ void CPU::step()
             SP--;
             memoryBus.write(SP, return_address & 0xFF);
             PC = 8;
+            break;
+        }
+        case 0xD0: { // RET NC
+            if (!getflag_C()) {
+                uint8_t lo = memoryBus.read(SP);
+                SP++;
+                uint8_t hi = memoryBus.read(SP);
+                SP++;
+                PC = (hi << 8) | lo;
+            } else {
+                PC++;
+            }
             break;
         }
         case 0xD1: { // POP DE
@@ -1438,6 +1594,54 @@ void CPU::step()
             PC++;
             break;
         }
+        case 0xD2: { // JP NC n16
+            PC++;
+            uint8_t lo = memoryBus.read(PC);
+            PC++;
+            uint8_t hi = memoryBus.read(PC);
+            uint16_t address = (hi << 8) | lo;
+            if (!getflag_C()) {
+                PC = address;
+            } else {
+                PC++;
+            }
+            break;
+        }
+        case 0xD3: { // no operation listed
+            break;
+        }
+        case 0xD4: { // CALL NC n16
+            PC++;
+            uint8_t lo = memoryBus.read(PC);
+            PC++;
+            uint8_t hi = memoryBus.read(PC);
+            uint16_t address = (hi << 8) | lo;
+            if (!getflag_C()) {
+                uint16_t return_address = PC + 1;
+                SP--;
+                memoryBus.write(SP, return_address >> 8);
+                SP--;
+                memoryBus.write(SP, return_address & 0xFF);
+                PC = address;
+            } else {
+                PC++;
+            }
+            break;
+        }
+        case 0xD5: // PUSH DE
+            SP--;
+            memoryBus.write(SP, getDE() >> 8);
+            SP--;
+            memoryBus.write(SP, getDE() & 0xFF);
+            PC++;
+            break;
+        case 0xD6: { // SUB A,n8
+            PC++;
+            uint8_t value = memoryBus.read(PC);
+            sub(A,value);
+            PC++;
+            break;
+        }
         case 0xD7: { // RST $10
             uint16_t return_address = PC + 1;
             SP--;
@@ -1445,6 +1649,63 @@ void CPU::step()
             SP--;
             memoryBus.write(SP, return_address & 0xFF);
             PC = 16;
+            break;
+        }
+        case 0xD8: { // RET C
+            if (getflag_C()) {
+                uint8_t lo = memoryBus.read(SP);
+                SP++;
+                uint8_t hi = memoryBus.read(SP);
+                SP++;
+                PC = (hi << 8) | lo;
+            } else {
+                PC++;
+            }
+            break;
+        }
+        case 0xD9: // RETI
+            // TODO: implement interrupts
+            break;
+        case 0xDA: { // JP C n16
+            PC++;
+            uint8_t lo = memoryBus.read(PC);
+            PC++;
+            uint8_t hi = memoryBus.read(PC);
+            uint16_t address = (hi << 8) | lo;
+            if (getflag_C()) {
+                PC = address;
+            } else {
+                PC++;
+            }
+            break;
+        }
+        case 0xDB: // no operation listed
+            break;
+        case 0xDC: { // CALL C n16
+            PC++;
+            uint8_t lo = memoryBus.read(PC);
+            PC++;
+            uint8_t hi = memoryBus.read(PC);
+            uint16_t address = (hi << 8) | lo;
+            if (getflag_C()) {
+                uint16_t return_address = PC + 1;
+                SP--;
+                memoryBus.write(SP, return_address >> 8);
+                SP--;
+                memoryBus.write(SP, return_address & 0xFF);
+                PC = address;
+            } else {
+                PC++;
+            }
+            break;
+        }
+        case 0xDD: // no operation listed
+            break;
+        case 0xDE: { // SBC A,n8
+            PC++;
+            uint8_t value = memoryBus.read(PC);
+            sbc(A, value);
+            PC++;
             break;
         }
         case 0xDF: { // RST $18
@@ -1465,6 +1726,20 @@ void CPU::step()
             PC++;
             break;
         }
+        case 0xE5: // PUSH HL
+            SP--;
+            memoryBus.write(SP, getHL() >> 8);
+            SP--;
+            memoryBus.write(SP, getHL() & 0xFF);
+            PC++;
+            break;
+        case 0xE6: { // AND A,n8
+            PC++;
+            uint8_t value = memoryBus.read(PC);
+            AND(A,value);
+            PC++;
+            break;
+        }
         case 0xE7: { // RST $20
             uint16_t return_address = PC + 1;
             SP--;
@@ -1472,6 +1747,16 @@ void CPU::step()
             SP--;
             memoryBus.write(SP, return_address & 0xFF);
             PC = 32;
+            break;
+        }
+        case 0xE9: // JP HL
+            PC = getHL();
+            break;
+        case 0xEE: { // XOR A,n8
+            PC++;
+            uint8_t value = memoryBus.read(PC);
+            XOR(A,value);
+            PC++;
             break;
         }
         case 0xEF: { // RST $28
@@ -1483,6 +1768,29 @@ void CPU::step()
             PC = 40;
             break;
         }
+        case 0xF1: { // POP AF
+            uint8_t lo = memoryBus.read(SP);
+            SP++;
+            uint8_t hi = memoryBus.read(SP);
+            SP++;
+            setAF((hi << 8) | lo);
+            PC++;
+            break;
+        }
+        case 0xF5: // PUSH AF
+            SP--;
+            memoryBus.write(SP, getAF() >> 8);
+            SP--;
+            memoryBus.write(SP, getAF() & 0xFF);
+            PC++;
+            break;
+        case 0xF6: { // OR A,n8
+            PC++;
+            uint8_t value = memoryBus.read(PC);
+            OR(A,value);
+            PC++;
+            break;
+        }
         case 0xF7: { // RST $30
             uint16_t return_address = PC + 1;
             SP--;
@@ -1490,6 +1798,20 @@ void CPU::step()
             SP--;
             memoryBus.write(SP, return_address & 0xFF);
             PC = 48;
+            break;
+        }
+        case 0xFB: // EI
+            // TODO: implement interrupts
+            break;
+        case 0xFC: // no operation listed
+            break;
+        case 0xFD: // no operation listed
+            break;
+        case 0xFE: { // CP A,n8
+            PC++;
+            uint8_t value = memoryBus.read(PC);
+            CP(A, value);
+            PC++;
             break;
         }
         case 0xFF: { // RST $38
