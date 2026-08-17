@@ -127,6 +127,22 @@ public:
 
     void CB_BIT(uint8_t bitNum, uint8_t& reg);
 
+    void CB_RL(uint8_t &reg);
+
+    void CB_RLC(uint8_t &reg);
+
+    void CB_RR(uint8_t &reg);
+
+    void CB_RRC(uint8_t &reg);
+
+    void CB_SLA(uint8_t &reg);
+
+    void CB_SRA(uint8_t &reg);
+
+    void CB_SWAP(uint8_t &reg);
+
+    void CB_SRL(uint8_t &reg);
+
 private:
     Bus& memoryBus;
     Debugger& debugger;

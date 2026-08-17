@@ -113,8 +113,298 @@ void CPU::CB_BIT(uint8_t bitNum, uint8_t &reg) {
     setflag_H(true);
 }
 
+void CPU::CB_RL(uint8_t &reg) {
+    bool bit7 = !!(reg & (1 << 7));
+    reg = (reg << 1) | getflag_C();
+    setflag_Z(reg == 0);
+    setflag_N(false);
+    setflag_H(false);
+    setflag_C(bit7);
+}
+
+void CPU::CB_RLC(uint8_t &reg) {
+    bool bit7 = !!(reg & (1 << 7));
+    reg = (reg << 1) | bit7;
+    setflag_Z(reg == 0);
+    setflag_N(false);
+    setflag_H(false);
+    setflag_C(bit7);
+}
+
+void CPU::CB_RR(uint8_t &reg) {
+    bool bit0 = reg & 0x01;
+    reg = (reg >> 1) | (getflag_C() << 7);
+    setflag_Z(reg == 0);
+    setflag_N(false);
+    setflag_H(false);
+    setflag_C(bit0);
+}
+
+void CPU::CB_RRC(uint8_t &reg) {
+    bool bit0 = reg & 0x01;
+    reg = (reg >> 1) | (bit0 << 7);
+    setflag_Z(reg == 0);
+    setflag_N(false);
+    setflag_H(false);
+    setflag_C(bit0);
+}
+
+void CPU::CB_SLA(uint8_t &reg) {
+    bool bit7 = !!(reg & (1 << 7));
+    reg = (reg << 1);
+    setflag_Z(reg == 0);
+    setflag_N(false);
+    setflag_H(false);
+    setflag_C(bit7);
+}
+
+void CPU::CB_SRA(uint8_t &reg) {
+    uint8_t bit7 = reg & (1 << 7);
+    bool bit0 = reg & 0x01;
+    reg = (reg >> 1) | bit7;
+    setflag_Z(reg == 0);
+    setflag_N(false);
+    setflag_H(false);
+    setflag_C(bit0);
+}
+
+void CPU::CB_SWAP(uint8_t &reg) {
+    uint8_t low = reg & 0x0F;
+    reg = (reg >> 4) | (low << 4);
+    setflag_Z(reg == 0);
+    setflag_N(false);
+    setflag_H(false);
+    setflag_C(false);
+}
+
+void CPU::CB_SRL(uint8_t &reg) {
+    uint8_t bit0 = reg & 0x01;
+    reg >>= 1;
+    setflag_Z(reg == 0);
+    setflag_N(false);
+    setflag_H(false);
+    setflag_C(bit0);
+}
+
 void CPU::exec_CB(uint8_t operation) {
     switch (operation) {
+        case 0x00: // RLC B
+            CB_RLC(B);
+            break;
+        case 0x01: // RLC C
+            CB_RLC(C);
+            break;
+        case 0x02: // RLC D
+            CB_RLC(D);
+            break;
+        case 0x03: // RLC E
+            CB_RLC(E);
+            break;
+        case 0x04: // RLC H
+            CB_RLC(H);
+            break;
+        case 0x05: // RLC L
+            CB_RLC(L);
+            break;
+        case 0x06: { // RLC [HL]
+            uint8_t value = memoryBus.read(getHL());
+            CB_RLC(value);
+            memoryBus.write(getHL(), value);
+            break;
+        }
+        case 0x07: // RLC A
+            CB_RLC(A);
+            break;
+        case 0x08: // RRC B
+            CB_RRC(B);
+            break;
+        case 0x09: // RRC C
+            CB_RRC(C);
+            break;
+        case 0x0A: // RRC D
+            CB_RRC(D);
+            break;
+        case 0x0B: // RRC E
+            CB_RRC(E);
+            break;
+        case 0x0C: // RRC H
+            CB_RRC(H);
+            break;
+        case 0x0D: // RRC L
+            CB_RRC(L);
+            break;
+        case 0x0E: { // RRC [HL]
+            uint8_t value = memoryBus.read(getHL());
+            CB_RRC(value);
+            memoryBus.write(getHL(), value);
+            break;
+        }
+        case 0x0F: // RRC A
+            CB_RRC(A);
+            break;
+        case 0x10: // RL B
+            CB_RL(B);
+            break;
+        case 0x11: // RL C
+            CB_RL(C);
+            break;
+        case 0x12: // RL D
+            CB_RL(D);
+            break;
+        case 0x13: // RL E
+            CB_RL(E);
+            break;
+        case 0x14: // RL H
+            CB_RL(H);
+            break;
+        case 0x15: // RL L
+            CB_RL(L);
+            break;
+        case 0x16: { // RL [HL]
+            uint8_t value = memoryBus.read(getHL());
+            CB_RL(value);
+            memoryBus.write(getHL(), value);
+            break;
+        }
+        case 0x17: // RL A
+            CB_RL(A);
+            break;
+        case 0x18: // RR B
+            CB_RR(B);
+            break;
+        case 0x19: // RR C
+            CB_RR(C);
+            break;
+        case 0x1A: // RR D
+            CB_RR(D);
+            break;
+        case 0x1B: // RR E
+            CB_RR(E);
+            break;
+        case 0x1C: // RR H
+            CB_RR(H);
+            break;
+        case 0x1D: // RR L
+            CB_RR(L);
+            break;
+        case 0x1E: { // RR [HL]
+            uint8_t value = memoryBus.read(getHL());
+            CB_RR(value);
+            memoryBus.write(getHL(), value);
+            break;
+        }
+        case 0x1F: // RR A
+            CB_RR(A);
+            break;
+            // SLA
+        case 0x20: // SLA B
+            CB_SLA(B);
+            break;
+        case 0x21: // SLA C
+            CB_SLA(C);
+            break;
+        case 0x22: // SLA D
+            CB_SLA(D);
+            break;
+        case 0x23: // SLA E
+            CB_SLA(E);
+            break;
+        case 0x24: // SLA H
+            CB_SLA(H);
+            break;
+        case 0x25: // SLA L
+            CB_SLA(L);
+            break;
+        case 0x26: { // SLA [HL]
+            uint8_t value = memoryBus.read(getHL());
+            CB_SLA(value);
+            memoryBus.write(getHL(), value);
+            break;
+        }
+        case 0x27: // SLA A
+            CB_SLA(A);
+            break;
+        case 0x28: // SRA B
+            CB_SRA(B);
+            break;
+        case 0x29: // SRA C
+            CB_SRA(C);
+            break;
+        case 0x2A: // SRA D
+            CB_SRA(D);
+            break;
+        case 0x2B: // SRA E
+            CB_SRA(E);
+            break;
+        case 0x2C: // SRA H
+            CB_SRA(H);
+            break;
+        case 0x2D: // SRA L
+            CB_SRA(L);
+            break;
+        case 0x2E: { // SRA [HL]
+            uint8_t value = memoryBus.read(getHL());
+            CB_SRA(value);
+            memoryBus.write(getHL(), value);
+            break;
+        }
+        case 0x2F: // SRA A
+            CB_SRA(A);
+            break;
+        case 0x30: // SWAP B
+            CB_SWAP(B);
+            break;
+        case 0x31: // SWAP C
+            CB_SWAP(C);
+            break;
+        case 0x32: // SWAP D
+            CB_SWAP(D);
+            break;
+        case 0x33: // SWAP E
+            CB_SWAP(E);
+            break;
+        case 0x34: // SWAP H
+            CB_SWAP(H);
+            break;
+        case 0x35: // SWAP L
+            CB_SWAP(L);
+            break;
+        case 0x36: { // SWAP [HL]
+            uint8_t value = memoryBus.read(getHL());
+            CB_SWAP(value);
+            memoryBus.write(getHL(), value);
+            break;
+        }
+        case 0x37: // SWAP A
+            CB_SWAP(A);
+            break;
+        case 0x38: // SRL B
+            CB_SRL(B);
+            break;
+        case 0x39: // SRL C
+            CB_SRL(C);
+            break;
+        case 0x3A: // SRL D
+            CB_SRL(D);
+            break;
+        case 0x3B: // SRL E
+            CB_SRL(E);
+            break;
+        case 0x3C: // SRL H
+            CB_SRL(H);
+            break;
+        case 0x3D: // SRL L
+            CB_SRL(L);
+            break;
+        case 0x3E: { // SRL [HL]
+            uint8_t value = memoryBus.read(getHL());
+            CB_SRL(value);
+            memoryBus.write(getHL(), value);
+            break;
+        }
+        case 0x3F: // SRL A
+            CB_SRL(A);
+            break;
         case 0x40: // BIT 0,B
             CB_BIT(0, B);
             break;
@@ -2135,6 +2425,7 @@ void CPU::step()
             break;
         }
         default: // unknown opcode
+            PC++;
             break;
     }
 }
