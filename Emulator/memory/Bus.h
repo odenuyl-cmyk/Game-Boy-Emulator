@@ -24,5 +24,22 @@ public:
 
 private:
     static MemoryType getMemoryType(uint16_t address);
-    std::array<uint8_t, 0x10000> memory{};
+
+    std::array<uint8_t, 0x04000> ROM0{};
+    std::array<uint8_t, 0x04000> ROMX{};
+
+    std::array<uint8_t, 0x2000> VRAM{};
+
+    std::array<uint8_t, 0x2000> EXT_RAM{};
+
+    std::array<uint8_t, 0x1000> WRAM0{};
+    std::array<uint8_t, 0x1000> WRAMX{};
+
+    std::array<uint8_t, 0xA0> OAM{};
+
+    std::array<uint8_t, 0x80> IO{};
+
+    std::array<uint8_t, 0x7F> HRAM{};
+
+    uint8_t IE{};
 };
